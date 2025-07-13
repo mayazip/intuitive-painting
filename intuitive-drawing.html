@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>לוח ציור אינטואיטיבי שיתופי</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+      direction: rtl;
+    }
+    canvas {
+      border: 2px solid #ccc;
+      margin-top: 15px;
+      background: #fff;
+      cursor: crosshair;
+    }
+    .controls {
+      margin: 15px;
+    }
+    textarea {
+      width: 90%;
+      height: 100px;
+      margin-top: 15px;
+      font-size: 1em;
+    }
+    button, input[type="range"], input[type="color"] {
+      margin: 10px;
+      padding: 8px 12px;
+      font-size: 1em;
+    }
+    .audio-controls {
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎨 לוח ציור אינטואיטיבי שיתופי</h1>
+  <p>מציירות יחד, מרגישות יחד. הזמיני משתתפת וצרו יצירה משותפת.</p>
+
+  <!-- 🎵 מוזיקה מרגיעה -->
+  <div class="audio-controls">
+    <audio id="bgMusic" autoplay loop controls>
+      <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_3d3fda4661.mp3" type="audio/mp3">
+      הדפדפן שלך לא תומך בנגן אודיו.
+    </audio>
+  </div>
+
+  <!-- 🔗 כפתור שיתוף שיתופי -->
+  <button onclick="TogetherJS(this); return false;">הזמיני משתתפת</button>
+
+  <!-- 🎨 לוח ציור -->
+  <canvas id="drawingCanvas" width="700" height="400"></canvas><br>
+
+  <div class="controls">
+    <label for="colorPicker">בחרי צבע:</label>
+    <input type="color" id="colorPicker" value="#000000">
+
+    <label for="brushSize">גודל מברשת:</label>
+    <input type="range" id="brushSize" min="1" max="30" value="3">
+  </div>
+
+  <button onclick="clearCanvas()">ניקוי ציור</button>
+  <button onclick="downloadCanvas()">הורדת ציור</button>
+
+  <h2>📝 שיקוף רגשי</h2>
+  <p>כתבי בכמה מילים מה חווית או הרגשת בזמן הציור:</p>
+  <textarea placeholder="תחושות, מחשבות, תובנות..."></textarea>
+
+  <!-- 🧠 TogetherJS -->
+  <script src="https://togetherjs.com/togetherjs-min.js"></script>
+
+  <!-- 🎨 קוד ציור -->
+  <script>
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    const colorPicker = document.getElementById('colorPicker');
+    const brushSizeInput = document.getElementById('brushSize');
+
+    let painting = false;
+
+    canvas.addEventListener('mousedown', () => {
+      painting = true;
+      ctx.beginPath();
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      painting = false;
+      ctx.beginPath();
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      painting = false;
+      ctx.beginPath();
+    });
+
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(e) {
+      if (!painting) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineWidth = brushSizeInput.value;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = colorPicker.value;
+
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function downloadCanvas() {
+      const link = document.createElement('a');
+      link.download = 'intuitive-drawing.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+
+</body>
+</html>
